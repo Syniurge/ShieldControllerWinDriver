@@ -2,7 +2,7 @@ NVIDIA Shield Controller Windows driver
 =======================
 This small USB filter driver intercepts and tweaks the reported HID Report Descriptor to make DirectInput detect it.
 
-NVIDIA previously published a driver that was only usable if you had a NVIDIA graphics card, and also has issues on its own. Excluding AMD and Intel graphics card owners has made a lot of people extremely displeased. I've bought Tegra hardware (nVidia Shield tablet and Jetson) and used to applaud their open source efforts, but screwing their game controller buyers like this makes me regret my decision.
+NVIDIA previously published a driver that was only usable if you had a NVIDIA graphics card, and also has issues on its own anyway. Excluding AMD and Intel graphics card owners has made a lot of people extremely displeased. I've bought Tegra hardware (nVidia Shield tablet and Jetson) and used to applaud their open source efforts, but screwing their game controller buyers like this makes me regret my decision.
 
 What was the issue?
 --------------
@@ -35,7 +35,7 @@ Making this driver was helped tremendously by `usbhid-dump`, `hidrd-convert`, Wi
 
 Installation and signing issue
 --------------
-The driver isn't signed (signing a driver costs $260), and on recent Windows versions it's not possible to permanently disable signing checks, so for example on Windows 10 you first have to do the following:
+The driver isn't signed (signing a driver would cost me $260), and on recent Windows versions it's not possible to permanently disable signing checks, so for example on Windows 10 you first have to do the following:
 
 > Click the Start Start menu and select Settings.
 > Click Update and Security.
@@ -51,5 +51,15 @@ The driver isn't signed (signing a driver costs $260), and on recent Windows ver
 
 Once the signing check is disabled you can install the driver by right-click on the .inf file and selecting `Install`.
 
-The generic driver still takes precedence over unsigned drivers, so you now have to manually select the driver for you Shield controller in the device manager:
+The generic driver still takes precedence over unsigned drivers, so you now have to manually select the driver for you Shield controller in the device manager. First display devices by connection, so you can find your controller easily:
 
+![alt text](https://github.com/Syniurge/ShieldControllerWinDriver/blob/master/doc/DevMgrByConnection.png "DevMgrByConnection")
+![alt text](https://github.com/Syniurge/ShieldControllerWinDriver/blob/master/doc/ShieldControllerPID.png "ShieldControllerPID")
+
+Then select the **top** `USB input device` node the choose "Update the driver..", and then:
+
+![alt text](https://github.com/Syniurge/ShieldControllerWinDriver/blob/master/doc/ShieldCtrlDriverStep1.png "ShieldCtrlDriverStep1")
+![alt text](https://github.com/Syniurge/ShieldControllerWinDriver/blob/master/doc/ShieldCtrlDriverStep2.png "ShieldCtrlDriverStep2")
+![alt text](https://github.com/Syniurge/ShieldControllerWinDriver/blob/master/doc/ShieldCtrlDriverStep3.png "ShieldCtrlDriverStep3")
+
+Finally disconnect and reconnect the controller as switching drivers sometimes causes problems. It should now be detected as a DirectInput gamepad, in games, x360ce, etc.
