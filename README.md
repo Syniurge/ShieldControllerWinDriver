@@ -1,8 +1,8 @@
 NVIDIA Shield Controller Windows driver
 =======================
-This small USB filter driver intercepts and tweaks the reported HID Report Descriptor to make DirectInput detect it.
+This small USB filter driver intercepts and tweaks the HID Report Descriptor to make DirectInput detect it as a gamepad.
 
-NVIDIA previously published a driver that was only usable if you had a NVIDIA graphics card, and also has issues on its own anyway. Excluding AMD and Intel graphics card owners has made a lot of people extremely displeased. I've bought Tegra hardware (nVidia Shield tablet and Jetson) and used to applaud their open source efforts, but screwing their game controller buyers like this makes me regret my decision.
+NVIDIA previously released a driver that was bundled with GeForce Experience and only usable by NVIDIA graphics card users, and also suffered from a variety of issues according to forum discussions. Excluding AMD and Intel graphics card owners has made a lot of people extremely displeased. I've bought Tegra hardware (nVidia Shield tablet and Jetson) and used to applaud their open source efforts, but screwing their game controller buyers like this makes me regret my decision.
 
 What was the issue?
 --------------
@@ -29,34 +29,42 @@ By playing with the `vhidmini` driver from the DDK which provides a virtual HID 
 
 Commenting those lines made the virtual device show up in the game controller applet of the configuration panel.
 
-The triggers were still not being detected by DirectInput, so the filter driver also changes their "HID usage" from Accelerator and Brake axis to Rx and Ry axis.
+So based on this finding a small lower filter driver under HidUsb was written to modify the descriptor reported to HidUsb in order to remove that collection. The triggers were still not being detected by DirectInput, so another tweak provided by the filter driver is to change their "HID usage" from Accelerator and Brake axis to Rx and Ry axis.
 
 Making this driver was helped tremendously by `usbhid-dump`, `hidrd-convert`, Wireshark, and the vague yet helpful instructions that someone who managed to change a USB descriptor gave on the ntdev mailing-list.
 
+Binaries
+--------------
+ * 64 bits: http://homo-nebulus.fr/shieldcontrollerusbfilter/ShieldControllerDriver_64.zip
+ * 32 bits: http://homo-nebulus.fr/shieldcontrollerusbfilter/ShieldControllerDriver_32.zip
+
 Installation and signing issue
 --------------
-The driver isn't signed (signing a driver would cost me $260), and on recent Windows versions it's not possible to permanently disable signing checks, so for example on Windows 10 you first have to do the following:
 
-> Click the Start Start menu and select Settings.
-> Click Update and Security.
-> Click on Recovery.
-> Click Restart now under Advanced Startup.
-> Click Troubleshoot.
-> Click Advanced options.
-> Click Startup Settings.
-> Click on Restart.
-> On the Startup Settings screen press F7 to disable driver signature enforcement.
+The driver isn't signed (signing a driver would cost me $260), and on recent Windows versions it's not possible to permanently disable signing checks, so for example **on Windows 10** you first have to do the following:
 
-**This special startup has to be done everytime you want to use the controller (as long as the driver is unsigned). Sorry about that.**
+> 1. Click the Start Start menu and select Settings.
+> 2. Click Update and Security.
+> 3. Click on Recovery.
+> 4. Click Restart now under Advanced Startup.
+> 5. Click Troubleshoot.
+> 6. Click Advanced options.
+> 7. Click Startup Settings.
+> 8. Click on Restart.
+> 9. On the Startup Settings screen press F7 to disable driver signature enforcement.
 
-Once the signing check is disabled you can install the driver by right-click on the .inf file and selecting `Install`.
+**On Windows 8**: https://learn.sparkfun.com/tutorials/disabling-driver-signature-on-windows-8/disabling-signed-driver-enforcement-on-windows-8
 
-The generic driver still takes precedence over unsigned drivers, so you now have to manually select the driver for you Shield controller in the device manager. First display devices by connection, so you can find your controller easily:
+**This special startup has to be done everytime you want to use the controller (as long as the driver remains unsigned). Sorry about that.**
+
+Once the signing check is disabled you can install the driver by right-clicking on the .inf file and selecting `Install`.
+
+The generic driver still takes precedence over unsigned drivers, so you now have to manually select the driver for your Shield controller in the device manager. First display devices by connection, so you can find your controller easily:
 
 ![alt text](https://github.com/Syniurge/ShieldControllerWinDriver/blob/master/doc/DevMgrByConnection.png "DevMgrByConnection")
 ![alt text](https://github.com/Syniurge/ShieldControllerWinDriver/blob/master/doc/ShieldControllerPID.png "ShieldControllerPID")
 
-Then select the **top** `USB input device` node the choose "Update the driver..", and then:
+Then select the **top** `USB input device` node and choose "Update the driver..", and then:
 
 ![alt text](https://github.com/Syniurge/ShieldControllerWinDriver/blob/master/doc/ShieldCtrlDriverStep1.png "ShieldCtrlDriverStep1")
 ![alt text](https://github.com/Syniurge/ShieldControllerWinDriver/blob/master/doc/ShieldCtrlDriverStep2.png "ShieldCtrlDriverStep2")
