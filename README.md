@@ -29,7 +29,7 @@ By playing with the `vhidmini` driver from the DDK which provides a virtual HID 
 
 Commenting those lines made the virtual device show up in the game controller applet of the configuration panel.
 
-So based on this finding a small lower filter driver under HidUsb was written to modify the descriptor reported to HidUsb in order to remove that collection. The triggers were still not being detected by DirectInput, so another tweak provided by the filter driver is to change their "HID usage" from Accelerator and Brake axis to Rx and Ry axis.
+So based on this finding a small lower filter driver under HidUsb was written to modify the descriptor reported to HidUsb in order to tweak that collection, simply changing "Usage Minimum" and "Usage Maximum" (which are the actual lines preventing the detection) to "Usage". The triggers were still not being detected by DirectInput, so another tweak provided by the filter driver is to change their "HID usage" from Accelerator and Brake axis to Rx and Ry axis.
 
 Making this driver was helped tremendously by `usbhid-dump`, `hidrd-convert`, Wireshark, and the vague yet helpful instructions that someone who managed to change a USB descriptor gave on the ntdev mailing-list.
 

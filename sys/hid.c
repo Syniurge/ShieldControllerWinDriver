@@ -98,14 +98,18 @@ HID_REPORT_DESCRIPTOR       G_DefaultReportDescriptor[] = {
     0x09, 0x34,         /*          Usage (Ry),                */
     0x81, 0x02,         /*          Input (Variable),           */
     0xC0,               /*      End Collection,                 */
-    //0xA1, 0x01,         /*      Collection (Application),       */
-    //0x19, 0x01,         /*          Usage Minimum (01h),        */
+    0xA1, 0x01,         /*      Collection (Application),       */
+    //0x19, 0x01,         /*          Usage Minimum (01h),        */ // Using "Usage Minimum" and "Maximum" prevents the gamepad from being recognized as one by DirectInput, go figure..
     //0x29, 0x03,         /*          Usage Maximum (03h),        */
-    //0x26, 0xFF, 0xFF,   /*          Logical Maximum (-1),       */
-    //0x95, 0x03,         /*          Report Count (3),           */
-    //0x75, 0x10,         /*          Report Size (16),           */
-    //0x91, 0x02,         /*          Output (Variable),          */
-    //0xC0,               /*      End Collection,                 */
+    0x09, 0x01,         /*          Usage (01h),                 */   // left rumble
+    0x09, 0x02,          /*          Usage (02h),                 */   // right rumble
+    0x09, 0x03,         /*          Usage (03h),                 */
+    0x15, 0x00,         /*          Logical Minimum (0),        */
+    0x26, 0xFF, 0xFF,   /*          Logical Maximum (65536),       */
+    0x95, 0x03,         /*          Report Count (3),           */
+    0x75, 0x10,         /*          Report Size (16),           */
+    0x91, 0x02,         /*          Output (Variable),          */
+    0xC0,               /*      End Collection,                 */
     0xC0,               /*  End Collection,                     */
     0x05, 0x01,         /*  Usage Page (Desktop),               */
     0x09, 0x02,         /*  Usage (Mouse),                      */
