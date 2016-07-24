@@ -155,6 +155,13 @@ Return Value:
     // Figure out where we'll be sending all our requests
     //  once we're done with them
     devContext->TargetToSendRequestsTo = WdfDeviceGetIoTarget(hDevice);
+
+    // Init rumble values
+    devContext->isRumbling = FALSE;
+    devContext->leftRumbleStrength = 0;
+    devContext->rightRumbleStrength = 0;
+    devContext->rumbleGain = 255;
+    devContext->actuatorSel = 1;
     
     WDF_IO_QUEUE_CONFIG_INIT_DEFAULT_QUEUE(&queueConfig, WdfIoQueueDispatchParallel);
     queueConfig.EvtIoInternalDeviceControl = HidFx2EvtInternalDeviceControl;

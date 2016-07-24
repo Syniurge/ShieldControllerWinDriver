@@ -901,13 +901,6 @@ NvShieldIoTranslationComplete(
     WdfRequestComplete(Request, Params->IoStatus.Status);
 }
 
-static int isRumbling = FALSE;
-
-static unsigned short leftRumbleStrength = 0;
-static unsigned short rightRumbleStrength = 0;
-
-static unsigned short rumbleGain = 255;
-
 static NTSTATUS
 updateRumble(
     IN WDFREQUEST   Request,
@@ -925,8 +918,8 @@ updateRumble(
         (ULONG)((((ULONG)'N') << 16) + (((ULONG)'V') << 8) + 'T')
     );
 
-    unsigned short leftRumble = isRumbling ? leftRumbleStrength : 0;
-    unsigned short rightRumble = isRumbling ? rightRumbleStrength : 0;
+    unsigned short leftRumble = devContext->isRumbling ? devContext->leftRumbleStrength : 0;
+    unsigned short rightRumble = devContext->isRumbling ? devContext->rightRumbleStrength : 0;
 
     tBuf[0] = 0x01; // Report ID
     tBuf[1] = leftRumble & 0xFF;
@@ -1055,8 +1048,6 @@ Return Value:
                 PUCHAR buf = (PUCHAR)USBPcapURBGetBufferPointer(req->TransferBufferLength,
                     req->TransferBuffer, req->TransferBufferMDL);
 
-                static int actuatorSel = 1; // 1 = left, 2 = right
-
                 int completeReq = FALSE;
 
                 if (req->Value == 0x020C)
@@ -1067,7 +1058,7 @@ Return Value:
                             break;
                         case 0x02: // Disable actuators
                         case 0x03: // Stop all effects
-                            isRumbling = FALSE;
+                            devContext->isRumbling = FALSE;
                             status = updateRumble(Request, devContext, req);
                             return;
                         default:
@@ -1076,7 +1067,7 @@ Return Value:
                 }
                 else if (req->Value == 0x020D) // Device gain
                 {
-                    rumbleGain = (USHORT)buf[1];
+                    devContext->rumbleGain = (USHORT)buf[1];
                     status = updateRumble(Request, devContext, req);
                     return;
                 }
@@ -1090,19 +1081,19 @@ Return Value:
                     if (force < 0)
                         force = -force;
 
-                    if (actuatorSel == 1)
-                        leftRumbleStrength = force * rumbleGain;
+                    if (devContext->actuatorSel == 1)
+                        devContext->leftRumbleStrength = force * devContext->rumbleGain;
                     else
-                        rightRumbleStrength = force * rumbleGain;
+                        devContext->rightRumbleStrength = force * devContext->rumbleGain;
 
-                    //leftRumbleStrength = rightRumbleStrength = force * rumbleGain;
+                    devContext->actuatorSel = (devContext->actuatorSel == 1) ? 2 : 1;
 
                     status = updateRumble(Request, devContext, req);
                     return;
                 }
                 else if (req->Value == 0x0221) // Set effect
                 {
-                    actuatorSel = (buf[12] == 0x3F) ? 2 : 1; // so Ordinal 2 is 0xFF - 2^7 ?
+                    //devContext->actuatorSel = (buf[12] == 0x3F) ? 2 : 1; // so Ordinal 2 is 0xFF - 2^7 ?
                     completeReq = TRUE;
                 }
                 else if (req->Value == 0x020A) // Effect operation
@@ -1128,7 +1119,7 @@ Return Value:
                         case EFFECT_OP_START_SOLO:
                         case EFFECT_OP_STOP:
                         {
-                            isRumbling = buf[2] != EFFECT_OP_STOP;
+                            devContext->isRumbling = buf[2] != EFFECT_OP_STOP;
                             status = updateRumble(Request, devContext, req);
                             return;
                         }

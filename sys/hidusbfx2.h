@@ -348,6 +348,15 @@ typedef struct _DEVICE_EXTENSION{
 
     WDFIOTARGET TargetToSendRequestsTo;
 
+    int isRumbling;
+
+    unsigned short leftRumbleStrength;
+    unsigned short rightRumbleStrength;
+
+    unsigned short rumbleGain;
+
+    int actuatorSel; // 1 = left, 2 = right
+
 } DEVICE_EXTENSION, * PDEVICE_EXTENSION;
 
 WDF_DECLARE_CONTEXT_TYPE_WITH_NAME(DEVICE_EXTENSION, GetDeviceContext)
