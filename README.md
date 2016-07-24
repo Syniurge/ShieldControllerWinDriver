@@ -31,7 +31,9 @@ Commenting those lines made the virtual device show up in the game controller ap
 
 So based on this finding a small lower filter driver under HidUsb was written to modify the descriptor reported to HidUsb in order to tweak that collection, simply changing "Usage Minimum" and "Usage Maximum" (which are the actual lines preventing the detection) to "Usage". The triggers were still not being detected by DirectInput, so another tweak provided by the filter driver is to change their "HID usage" from Accelerator and Brake axis to Rx and Ry axis.
 
-Making this driver was helped tremendously by `usbhid-dump`, `hidrd-convert`, Wireshark, and the vague yet helpful instructions that someone who managed to change a USB descriptor gave on the ntdev mailing-list.
+Finally to support rumble in any game, old and new (while GeForce Experience only supports Xinput games), emulation of a HID Physical Input Device (PID) was added. The hack could be replicated for other controllers that don't bother with PID which is a way too complicated standard for basic gamepad rumble.
+
+Making this driver was helped tremendously by `usbhid-dump`, `hidrd-convert`, UsbLyzer, Wireshark, the `gc_n64_usb` firmware source code, and the vague yet helpful instructions that someone who managed to change a USB descriptor gave on the ntdev mailing-list.
 
 Binaries
 --------------
