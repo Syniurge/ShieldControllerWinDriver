@@ -4,7 +4,7 @@ Class       = HIDClass
 ClassGuid   = {745a17a0-74d3-11d0-b6fe-00a0c90f57da}
 Provider    = %ProviderName%
 DriverVer   = 01/10/2007,1.0.0.0
-CatalogFile = wudf.cat
+CatalogFile = nvshldctrl.cat
 
 ;
 ;   In order to use IHV drivers, the SourceDisksNames section must list the 
@@ -16,7 +16,7 @@ CatalogFile = wudf.cat
 ;   driver signing.
 
 [SourceDisksFiles]
-hidusbfx2.sys   = 99
+nvshldctrl.sys   = 99
 
 [SourceDisksNames]
 99 = %DISK_NAME%,,,""
@@ -30,30 +30,30 @@ CopyFilterDriver    = 12
 
 ; For XP and later
 [Standard.NT$ARCH$]
-%hidusbfx2%         = hidusbfx2.Inst.Win7, USB\VID_0955&PID_7210
+%nvshldctrl%         = nvshldctrl.Inst.Win7, USB\VID_0955&PID_7210
 
 ; For Win7 and later so that we can use inbox HID-KMDF mapper
 ;[Standard.NT$ARCH$.6.1]
-;%hidusbfx2%         = hidusbfx2.Inst.Win7, USB\VID_0955&PID_7210
+;%nvshldctrl%         = nvshldctrl.Inst.Win7, USB\VID_0955&PID_7210
 
 ;===============================================================
 ;   Install section for Win7 and later
 ;===============================================================
-[hidusbfx2.Inst.Win7.NT]
+[nvshldctrl.Inst.Win7.NT]
 CopyFiles = CopyFilterDriver
 
-[hidusbfx2.Inst.Win7.NT.HW]
-AddReg = hidusbfx2_Win7_Parameters.AddReg 
+[nvshldctrl.Inst.Win7.NT.HW]
+AddReg = nvshldctrl_Win7_Parameters.AddReg 
 
-[hidusbfx2.Inst.Win7.NT.Services]
-AddService = hidusbfx2,, hidusbfx2_Service_Inst,
+[nvshldctrl.Inst.Win7.NT.Services]
+AddService = nvshldctrl,, nvshldctrl_Service_Inst,
 AddService = HidUsb, 0x000001fa, HidUsb_AddService  ; flag 0x2 sets this as the service for the device
 
-[hidusbfx2_Win7_Parameters.AddReg]
-HKR,,"LowerFilters",0x00010008,"hidusbfx2"
+[nvshldctrl_Win7_Parameters.AddReg]
+HKR,,"LowerFilters",0x00010008,"nvshldctrl"
 
 [CopyFilterDriver]
-hidusbfx2.sys
+nvshldctrl.sys
 
 [HidUsb_AddService]
 ServiceType    = 1                  ; SERVICE_KERNEL_DRIVER
@@ -61,12 +61,12 @@ StartType      = 3                  ; SERVICE_DEMAND_START
 ErrorControl   = 1                  ; SERVICE_ERROR_NORMAL
 ServiceBinary  = %12%\HidUsb.sys
 
-[hidusbfx2_Service_Inst]
-DisplayName    = %hidusbfx2%
+[nvshldctrl_Service_Inst]
+DisplayName    = %nvshldctrl%
 ServiceType    = %SERVICE_KERNEL_DRIVER% 
 StartType      = %SERVICE_DEMAND_START% 
 ErrorControl   = %SERVICE_ERROR_IGNORE% 
-ServiceBinary  = %12%\hidusbfx2.sys 
+ServiceBinary  = %12%\nvshldctrl.sys 
 
 
 ;================================================================
@@ -77,7 +77,7 @@ ServiceBinary  = %12%\hidusbfx2.sys
 ;Localizable
 ProviderName        = "Angry AMD user"
 ManufacturerName    = "NVIDIA"
-hidusbfx2           = "NVIDIA SHIELD Controller" 
+nvshldctrl           = "NVIDIA SHIELD Controller" 
 DISK_NAME           = "HID USB FX2 Device Sample Install Disk"
 
 ;Non-Localizable

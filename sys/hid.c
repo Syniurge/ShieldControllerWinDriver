@@ -28,13 +28,6 @@ Revision History:
 
 #include <hidusbfx2.h>
 
-#ifdef ALLOC_PRAGMA
-    #pragma alloc_text( PAGE, HidFx2SetFeature)
-    #pragma alloc_text( PAGE, HidFx2GetFeature)
-    #pragma alloc_text( PAGE, SendVendorCommand)
-    #pragma alloc_text( PAGE, GetVendorData)
-#endif
-
 HID_REPORT_DESCRIPTOR       G_DefaultReportDescriptor[] = {
     0x05, 0x01,         /*  Usage Page (Desktop),               */
     0x15, 0x00,         /*  Logical Minimum (0),                */

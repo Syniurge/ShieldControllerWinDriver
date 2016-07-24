@@ -23,7 +23,10 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="hid.c" />
-    <ClCompile Include="usb.c" />
+    <ClCompile Include="driver.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="hid.c" />
     <ClCompile Include="driver.c">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -34,18 +37,8 @@
     </ClCompile>
     <ClCompile Include="hid.c" />
     <ClCompile Include="usb.c" />
-    <ClCompile Include="driver.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="hid.c" />
     <ClCompile Include="usb.c" />
-    <ClCompile Include="hid.c" />
-    <ClCompile Include="usb.c" />
-  </ItemGroup>
-  <ItemGroup>
-    <Inf Include=".\hidusbfx2.inx">
-      <Filter>Driver Files</Filter>
-    </Inf>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="hidusbfx2.rc">
@@ -56,11 +49,14 @@
     <ClInclude Include="hidusbfx2.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="trace.h" />
     <ClInclude Include="hidusbfx2.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="trace.h" />
-    <ClInclude Include="trace.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Inf Include="nvshldctrl.inx">
+      <Filter>Driver Files</Filter>
+    </Inf>
   </ItemGroup>
 </Project>
