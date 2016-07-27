@@ -1070,16 +1070,16 @@ Return Value:
                 }
                 else if (req->Value == 0x0205) // Set constant force
                 {
+                    LONG actSel = InterlockedXor(&devContext->actuatorSel, 1);
+
                     short force = (short)buf[2] + ((short)buf[3] << 8);
                     if (force < 0)
                         force = -force;
 
-                    if (devContext->actuatorSel == 1)
+                    if (actSel == 0)
                         devContext->leftRumbleStrength = force * devContext->rumbleGain;
                     else
                         devContext->rightRumbleStrength = force * devContext->rumbleGain;
-
-                    devContext->actuatorSel = (devContext->actuatorSel == 1) ? 2 : 1;
 
                     status = updateRumble(Request, devContext, req);
                     return;

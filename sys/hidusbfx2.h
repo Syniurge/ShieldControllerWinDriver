@@ -72,7 +72,7 @@ typedef struct _DEVICE_EXTENSION{
 
     unsigned short rumbleGain;
 
-    int actuatorSel; // 1 = left, 2 = right
+    LONG actuatorSel; // 1 = left, 2 = right
 
 } DEVICE_EXTENSION, * PDEVICE_EXTENSION;
 
