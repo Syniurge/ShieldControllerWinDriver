@@ -66,6 +66,7 @@ typedef struct _DEVICE_EXTENSION{
     WDFIOTARGET TargetToSendRequestsTo; 
     
     int isRumbling;
+    int isZeroRumble;
 
     unsigned short leftRumbleStrength;
     unsigned short rightRumbleStrength;

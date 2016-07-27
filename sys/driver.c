@@ -158,6 +158,7 @@ Return Value:
 
     // Init rumble values
     devContext->isRumbling = FALSE;
+    devContext->isZeroRumble = FALSE;
     devContext->leftRumbleStrength = 0;
     devContext->rightRumbleStrength = 0;
     devContext->rumbleGain = 255;

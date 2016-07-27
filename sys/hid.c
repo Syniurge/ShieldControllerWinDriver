@@ -903,6 +903,20 @@ updateRumble(
 {
     NTSTATUS status = STATUS_SUCCESS;
 
+    unsigned short leftRumble = devContext->isRumbling ? devContext->leftRumbleStrength : 0;
+    unsigned short rightRumble = devContext->isRumbling ? devContext->rightRumbleStrength : 0;
+
+    if (leftRumble == 0 && rightRumble == 0) {
+        if (devContext->isZeroRumble) {
+            // only translate to a zero output report once
+            WdfRequestComplete(Request, status);
+            return status;
+        }
+
+        devContext->isZeroRumble = TRUE;
+    } else
+        devContext->isZeroRumble = FALSE;
+
     const unsigned outputReportSize = 7;
 
     PUCHAR tBuf = (PUCHAR)ExAllocatePoolWithTag(
@@ -910,9 +924,6 @@ updateRumble(
         outputReportSize,
         (ULONG)((((ULONG)'N') << 16) + (((ULONG)'V') << 8) + 'T')
     );
-
-    unsigned short leftRumble = devContext->isRumbling ? devContext->leftRumbleStrength : 0;
-    unsigned short rightRumble = devContext->isRumbling ? devContext->rightRumbleStrength : 0;
 
     tBuf[0] = 0x01; // Report ID
     tBuf[1] = leftRumble & 0xFF;
@@ -1046,11 +1057,9 @@ Return Value:
                 if (req->Value == 0x020C)
                 {
                     switch (buf[1]) {
-                        case 0x04: // Device reset
-                            completeReq = TRUE;
-                            break;
                         case 0x02: // Disable actuators
                         case 0x03: // Stop all effects
+                        case 0x04: // Device reset
                             devContext->isRumbling = FALSE;
                             status = updateRumble(Request, devContext, req);
                             return;
@@ -1111,11 +1120,9 @@ Return Value:
                         case EFFECT_OP_START:
                         case EFFECT_OP_START_SOLO:
                         case EFFECT_OP_STOP:
-                        {
-                            devContext->isRumbling = buf[2] != EFFECT_OP_STOP;
+                            devContext->isRumbling = (buf[2] != EFFECT_OP_STOP);
                             status = updateRumble(Request, devContext, req);
                             return;
-                        }
                             
                         }
                         break;
