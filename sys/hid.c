@@ -1086,17 +1086,22 @@ Return Value:
                     if (force < 0)
                         force = -force;
 
-                    if (actSel == 0)
+                    if (actSel == 1) {
                         devContext->leftRumbleStrength = force * devContext->rumbleGain;
-                    else
+                        completeReq = TRUE; 
+                            // We only do one translation per two set constant force reports or the right URB 
+                            // may be handled by the USB bus driver before the left URB, resulting in setting 
+                            // incorrect rumble values.
+                            // This is especially felt when the rumble is supposed to be set to zero, and isn't.
+                    }
+                    else {
                         devContext->rightRumbleStrength = force * devContext->rumbleGain;
-
-                    status = updateRumble(Request, devContext, req);
-                    return;
+                        status = updateRumble(Request, devContext, req);
+                        return;
+                    }
                 }
                 else if (req->Value == 0x0221) // Set effect
                 {
-                    //devContext->actuatorSel = (buf[12] == 0x3F) ? 2 : 1; // so Ordinal 2 is 0xFF - 2^7 ?
                     completeReq = TRUE;
                 }
                 else if (req->Value == 0x020A) // Effect operation
