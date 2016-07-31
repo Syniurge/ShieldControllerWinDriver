@@ -1060,6 +1060,7 @@ Return Value:
                         case 0x02: // Disable actuators
                         case 0x03: // Stop all effects
                         case 0x04: // Device reset
+                            devContext->actuatorSel = 1;
                             devContext->isRumbling = FALSE;
                             status = updateRumble(Request, devContext, req);
                             return;
