@@ -1,6 +1,6 @@
 NVIDIA Shield Controller Windows driver
 =======================
-This small USB filter driver intercepts and tweaks the HID Report Descriptor to make DirectInput detect it as a gamepad.
+This small USB filter driver intercepts and tweaks the HID Report Descriptor to make DirectInput detect it as a gamepad. It also emulates a force feedback device for rumble support in both DirectInput and Xinput games, and tweaks the input data of the trackpad to make it usable.
 
 NVIDIA previously released a driver that was bundled with GeForce Experience and only usable by NVIDIA graphics card users, and also suffered from a variety of issues according to forum discussions. Excluding AMD and Intel graphics card owners has made a lot of people extremely displeased. I've bought Tegra hardware (nVidia Shield tablet and Jetson) and used to applaud their open source efforts, but screwing their game controller buyers like this makes me regret my decision.
 

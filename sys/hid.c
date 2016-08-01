@@ -703,6 +703,8 @@ HID_REPORT_DESCRIPTOR       G_DefaultReportDescriptor[] = {
     0x09, 0x31,         /*          Usage (Y),                  */
     0x15, 0x81,         /*          Logical Minimum (-127),     */
     0x25, 0x7F,         /*          Logical Maximum (127),      */
+    0x35, 0x81,                   //    Physical Minimum -127
+    0x45, 0x7F,                   //    Physical Maximum 127
     0x75, 0x10,         /*          Report Size (16),           */
     0x95, 0x02,         /*          Report Count (2),           */
     0x81, 0x06,         /*          Input (Variable, Relative), */
@@ -770,7 +772,11 @@ NvShieldIoInternalDeviceControlComplete(
     IN WDFCONTEXT Context
 )
 {
-    UNREFERENCED_PARAMETER(Target);
+    WDFDEVICE           device;
+    PDEVICE_EXTENSION   devContext = NULL;
+
+    device = WdfIoTargetGetDevice(Target);
+    devContext = GetDeviceContext(device);
 
     USHORT UrbFunction = (USHORT)(ptrdiff_t)Context;
 
@@ -778,6 +784,54 @@ NvShieldIoInternalDeviceControlComplete(
 
     switch (UrbFunction) 
     {
+
+    case URB_FUNCTION_BULK_OR_INTERRUPT_TRANSFER:
+    {
+        struct _URB_BULK_OR_INTERRUPT_TRANSFER *req = (struct _URB_BULK_OR_INTERRUPT_TRANSFER *)pUrb;
+
+        PUCHAR buf = (PUCHAR)USBPcapURBGetBufferPointer(req->TransferBufferLength,
+            req->TransferBuffer, req->TransferBufferMDL);
+
+        // Tweak trackpad interrupts
+        if (req->TransferBufferLength == 16 && buf[0] == 0x02) {
+            UCHAR x = buf[2];
+            UCHAR y = buf[4];
+
+            SHORT* diffX = (SHORT*) &buf[2];
+            SHORT* diffY = (SHORT*) &buf[4];
+
+            if (buf[1] & 0x08) {
+                if (devContext->isTrackpadPressed) {
+                    SHORT sqrX = (SHORT)x - (SHORT)devContext->origX;
+                    SHORT sqrY = ((SHORT)y - (SHORT)devContext->origY) * 2;
+
+                    *diffX = (sqrX > 0 ? sqrX : -sqrX) * sqrX;
+                    *diffY = (sqrY > 0 ? sqrY : -sqrY) * sqrY;
+                }
+                else {
+                    devContext->isTrackpadPressed = TRUE;
+                    *diffX = 0;
+                    *diffY = 0;
+                    //KeQuerySystemTime(&devContext->firstTrackpadPress);
+                }
+                devContext->origX = x;
+                devContext->origY = y;
+            }
+            else {
+                devContext->isTrackpadPressed = FALSE;
+                *diffX = 0;
+                *diffY = 0;
+
+                //LARGE_INTEGER lastTrackpadPress;
+                //KeQuerySystemTime(&lastTrackpadPress);
+
+                //if ((lastTrackpadPress.QuadPart - devContext->firstTrackpadPress.QuadPart) < 2500000) // 0.25s
+                //    buf[1] |= 1;
+            }
+        }
+
+        break;
+    }
 
     case URB_FUNCTION_GET_DESCRIPTOR_FROM_DEVICE:
     case URB_FUNCTION_GET_DESCRIPTOR_FROM_INTERFACE:
@@ -1161,6 +1215,7 @@ Return Value:
 
         case URB_FUNCTION_GET_DESCRIPTOR_FROM_DEVICE:
         case URB_FUNCTION_GET_DESCRIPTOR_FROM_INTERFACE:
+        case URB_FUNCTION_BULK_OR_INTERRUPT_TRANSFER:
             {
                 WdfRequestFormatRequestUsingCurrentType(Request);
 
