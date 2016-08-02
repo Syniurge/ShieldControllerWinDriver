@@ -31,7 +31,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="hid.c" />
-    <ClCompile Include="usb.c" />
     <ClCompile Include="driver.c">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -52,7 +51,6 @@
     <ClInclude Include="hidusbfx2.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="trace.h" />
   </ItemGroup>
   <ItemGroup>
     <Inf Include="nvshldctrl.inx">

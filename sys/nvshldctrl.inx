@@ -26,15 +26,31 @@ CopyFilterDriver    = 12
 
 [Manufacturer]
 %ManufacturerName%  = Standard,NT$ARCH$
-;%ManufacturerName%  = Standard,NT$ARCH$,NT$ARCH$.6.1
+%ManufacturerName%  = Standard,NT$ARCH$,NT$ARCH$.6.1
 
 ; For XP and later
 [Standard.NT$ARCH$]
+%nvshldctrl%         = nvshldctrl.Inst, USB\VID_0955&PID_7210
+
+; For Win7 and later
+[Standard.NT$ARCH$.6.1]
 %nvshldctrl%         = nvshldctrl.Inst.Win7, USB\VID_0955&PID_7210
 
-; For Win7 and later so that we can use inbox HID-KMDF mapper
-;[Standard.NT$ARCH$.6.1]
-;%nvshldctrl%         = nvshldctrl.Inst.Win7, USB\VID_0955&PID_7210
+;===============================================================
+;   Install section for XP thru Vista
+;===============================================================
+[nvshldctrl.Inst.NT]
+CopyFiles = CopyFilterDriver
+
+[nvshldctrl.Inst.NT.HW]
+AddReg = nvshldctrl_Parameters.AddReg 
+
+[nvshldctrl.Inst.NT.Services]
+AddService = nvshldctrl,, nvshldctrl_Service_Inst,
+AddService = HidUsb, 0x000001fa, HidUsb_AddService  ; flag 0x2 sets this as the service for the device
+
+[nvshldctrl_Parameters.AddReg]
+HKR,,"LowerFilters",0x00010008,"nvshldctrl"
 
 ;===============================================================
 ;   Install section for Win7 and later
@@ -61,12 +77,42 @@ StartType      = 3                  ; SERVICE_DEMAND_START
 ErrorControl   = 1                  ; SERVICE_ERROR_NORMAL
 ServiceBinary  = %12%\HidUsb.sys
 
+;===============================================================
+;   Service section (common to all OS versions)
+;===============================================================
+
 [nvshldctrl_Service_Inst]
 DisplayName    = %nvshldctrl%
 ServiceType    = %SERVICE_KERNEL_DRIVER% 
 StartType      = %SERVICE_DEMAND_START% 
 ErrorControl   = %SERVICE_ERROR_IGNORE% 
 ServiceBinary  = %12%\nvshldctrl.sys 
+
+;================================================================
+; WDF Coinstaller installation
+;===============================================================
+
+[DestinationDirs]
+nvshldctrl.Inst_CoInstaller_CopyFiles = 11
+
+[nvshldctrl.Inst.NT.CoInstallers]
+AddReg=nvshldctrl.Inst_CoInstaller_AddReg
+CopyFiles=nvshldctrl.Inst_CoInstaller_CopyFiles
+
+[nvshldctrl.Inst_CoInstaller_AddReg]
+HKR,,CoInstallers32,0x00010000, "WdfCoInstaller$KMDFCOINSTALLERVERSION$.dll,WdfCoInstaller"
+
+[nvshldctrl.Inst_CoInstaller_CopyFiles]
+WdfCoInstaller$KMDFCOINSTALLERVERSION$.dll,,,0x00000010    ;COPYFLG_NO_OVERWRITE (for win2k)
+
+[SourceDisksFiles]
+WdfCoInstaller$KMDFCOINSTALLERVERSION$.dll=99 ; make sure the number matches with SourceDisksNames
+
+[nvshldctrl.Inst.NT.Wdf]
+KmdfService = nvshldctrl, nvshldctrl_wdfsect
+
+[nvshldctrl_wdfsect]
+KmdfLibraryVersion = $KMDFVERSION$
 
 
 ;================================================================
