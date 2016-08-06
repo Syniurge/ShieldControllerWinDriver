@@ -1,6 +1,6 @@
 NVIDIA Shield Controller Windows driver
 =======================
-This small USB filter driver intercepts and tweaks the HID Report Descriptor to make DirectInput detect it as a gamepad. It also emulates a force feedback device for rumble support in both DirectInput and Xinput games, and tweaks the input data of the trackpad to make it usable.
+This small USB filter driver intercepts and tweaks the HID Report Descriptor to make DirectInput detect it as a gamepad. It also emulates a force feedback device for rumble support in both DirectInput and Xinput games, tweaks the input data of the trackpad to make it usable, and adds support for the volume increment/decrement buttons.
 
 NVIDIA previously released a driver that was bundled with GeForce Experience and only usable by NVIDIA graphics card users, and also suffered from a variety of issues according to forum discussions. Excluding AMD and Intel graphics card owners has made a lot of people extremely displeased. I've bought Tegra hardware (nVidia Shield tablet and Jetson) and used to applaud their open source efforts, but screwing their game controller buyers like this makes me regret my decision.
 
@@ -29,13 +29,15 @@ By playing with the `vhidmini` driver from the DDK which provides a virtual HID 
 
 Commenting those lines made the virtual device show up in the game controller applet of the configuration panel.
 
-So based on this finding a small lower filter driver under HidUsb was written to modify the descriptor reported to HidUsb in order to tweak that collection, simply changing "Usage Minimum" and "Usage Maximum" (which are the actual lines preventing the detection) to "Usage". The triggers were still not being detected by DirectInput, so another tweak provided by the filter driver is to change their "HID usage" from Accelerator and Brake axis to Rx and Ry axis.
+So based on this finding a small lower filter driver under HidUsb was written to modify the descriptor reported to HidUsb, changing "Usage Minimum" and "Usage Maximum" (which are the actual lines preventing the detection) to "Usage". The triggers were still not being detected by DirectInput, so another tweak provided by the filter driver is to change their "HID usage" from Accelerator and Brake axis to Rx and Ry axis.
 
-Finally to support rumble in any game, old and new (while GeForce Experience only supports Xinput games), emulation of a HID Physical Input Device (PID) was added. The hack could be replicated for other controllers that don't bother with PID which is a way too complicated standard for basic gamepad rumble.
+To support rumble in any game, old and new (while GeForce Experience only supports Xinput games), emulation of a HID Physical Input Device (PID) was added. The hack could be replicated for other controllers that don't bother with PID which is a way too complicated standard for basic gamepad rumble.
+
+Finally, the trackpad input gets tweaked to work like a standard trackpad, and because the HID gamepad client driver doesn't handle volume inc/dec buttons (while Linux picks them up without flinching), a virtual HID consumer control device was added that receives the input from those two buttons. Ironically that device was detected as a gamepad (and poor DirectInput has trouble when two different gamepads have the same IDs), so the above output collection was inserted to get rid of DirectInput.
 
 Making this driver was helped tremendously by `usbhid-dump`, `hidrd-convert`, UsbLyzer, Wireshark, the `gc_n64_usb` firmware source code, and the vague yet helpful instructions that someone who managed to change a USB descriptor gave on the ntdev mailing-list.
 
-Binaries
+Binaries (Windows 7 and later)
 --------------
  * 64 bits: http://homo-nebulus.fr/shieldcontrollerusbfilter/ShieldControllerDriver_64.zip
  * 32 bits: http://homo-nebulus.fr/shieldcontrollerusbfilter/ShieldControllerDriver_32.zip

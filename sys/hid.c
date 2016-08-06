@@ -678,6 +678,37 @@ HID_REPORT_DESCRIPTOR       G_DefaultReportDescriptor[] = {
 
     0xC0,               /*  End Collection,                     */
 
+    0x05, 0x0C,         /*  Usage Page (Consumer),              */
+    0x09, 0x01,         /*  Usage (Consumer Control),           */  // Virtual consumer control device
+    0xA1, 0x01,         /*  Collection (Application),           */
+    0x85, 0x1E,         /*      Report ID (30),                 */
+    0x15, 0x00,         /*      Logical Minimum (0),            */
+    0x25, 0x01,         /*      Logical Maximum (1),            */
+    0x75, 0x03,         /*      Report Size (3),                */
+    0x95, 0x01,         /*      Report Count (1),               */
+    0x81, 0x03,         /*      Input (Constant, Variable),     */
+    0x75, 0x01,         /*      Report Size (1),                */
+    0x95, 0x02,         /*      Report Count (2),               */
+    //0x09, 0xE2,         /*      Usage (Mute),                   */
+    0x09, 0xE9,         /*      Usage (Volume Inc),             */
+    0x09, 0xEA,         /*      Usage (Volume Dec),             */
+    //0x09, 0x30,         /*      Usage (Power),                  */
+    //0x0A, 0x24, 0x02,   /*      Usage (AC Back),                */
+    //0x0A, 0x23, 0x02,   /*      Usage (AC Home),                */
+    0x81, 0x02,         /*      Input (Variable),               */
+    0x75, 0x03,         /*      Report Size (3),                */
+    0x95, 0x01,         /*      Report Count (1),               */
+    0x81, 0x03,         /*      Input (Constant, Variable),     */
+    0xA1, 0x01,         /*      Collection (Application),       */
+        0x19, 0x01,         /*          Usage Minimum (01h),        */ // HACK: Without this deliberately DirectInput-incompatible collection the customer control device would get detected as a gamepad, go figure..
+        0x29, 0x03,         /*          Usage Maximum (03h),        */
+        0x15, 0x00,         /*          Logical Minimum (0),        */
+        0x26, 0xFF, 0xFF,   /*          Logical Maximum (65536),       */
+        0x95, 0x03,         /*          Report Count (3),           */
+        0x75, 0x10,         /*          Report Size (16),           */
+        0x91, 0x02,         /*          Output (Variable),          */
+        0xC0,               /*      End Collection,                 */
+    0xC0,               /*  End Collection,                     */
 
     0x05, 0x01,         /*  Usage Page (Desktop),               */
     0x09, 0x02,         /*  Usage (Mouse),                      */
@@ -792,8 +823,21 @@ NvShieldIoInternalDeviceControlComplete(
         PUCHAR buf = (PUCHAR)USBPcapURBGetBufferPointer(req->TransferBufferLength,
             req->TransferBuffer, req->TransferBufferMDL);
 
-        // Tweak trackpad interrupts
-        if (req->TransferBufferLength == 16 && buf[0] == 0x02) {
+        if (req->TransferBufferLength != 16)
+            break;
+
+        if (buf[0] == 0x01) {
+            // Mirror consumer control buttons in the consumer control virtual device, because the HID game controller client driver
+            // doesn't know how to handle them (while Linux has no problem picking them up).
+            UCHAR ccState = buf[2] & 0x18;
+
+            if (devContext->lastCCState != ccState) {
+                buf[0] = 0x1E; // 30
+                buf[1] = devContext->lastCCState = ccState;
+                req->TransferBufferLength = 2;
+            }
+        } else if (buf[0] == 0x02) {
+            // Tweak trackpad interrupts
             UCHAR x = buf[2];
             UCHAR y = buf[4];
 

@@ -169,6 +169,9 @@ Return Value:
     devContext->origY = 0;
     devContext->isTrackpadPressed = FALSE;
     devContext->firstTrackpadPress.QuadPart = 0;
+
+    // Init consumer control
+    devContext->lastCCState = 0;
     
     WDF_IO_QUEUE_CONFIG_INIT_DEFAULT_QUEUE(&queueConfig, WdfIoQueueDispatchParallel);
     queueConfig.EvtIoInternalDeviceControl = HidFx2EvtInternalDeviceControl;

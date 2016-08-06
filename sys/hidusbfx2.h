@@ -82,6 +82,9 @@ typedef struct _DEVICE_EXTENSION{
 
     int isTrackpadPressed;
     LARGE_INTEGER firstTrackpadPress;
+
+    // Consumer control
+    UCHAR lastCCState;
 } DEVICE_EXTENSION, * PDEVICE_EXTENSION;
 
 WDF_DECLARE_CONTEXT_TYPE_WITH_NAME(DEVICE_EXTENSION, GetDeviceContext)
