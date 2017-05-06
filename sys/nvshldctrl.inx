@@ -3,26 +3,20 @@ Signature   = "$WINDOWS NT$"
 Class       = HIDClass
 ClassGuid   = {745a17a0-74d3-11d0-b6fe-00a0c90f57da}
 Provider    = %ProviderName%
-DriverVer   = 01/10/2007,1.0.0.0
+DriverVer   = ; Set on build
 CatalogFile = nvshldctrl.cat
 
-;
-;   In order to use IHV drivers, the SourceDisksNames section must list the 
-;   disk(s) containing the drivers and the SourceDisksFiles section must list 
-;   which disk number each file to be copied is found on.
-;
-;   Files used in a driver installation need to be digitally signed otherwise 
-;   installation may fail.  See documentation elsewhere in the DDK regarding 
-;   driver signing.
 
 [SourceDisksFiles]
-nvshldctrl.sys   = 99
+nvshldctrl.sys = 99
+WdfCoInstaller$KMDFCOINSTALLERVERSION$.dll=99
 
 [SourceDisksNames]
 99 = %DISK_NAME%,,,""
 
 [DestinationDirs]
-CopyFilterDriver    = 12
+CopyFilterDriver = 12
+nvshldctrl.Inst_CoInstaller_CopyFiles = 11
 
 [Manufacturer]
 %ManufacturerName%  = Standard,NT$ARCH$
@@ -92,9 +86,6 @@ ServiceBinary  = %12%\nvshldctrl.sys
 ; WDF Coinstaller installation
 ;===============================================================
 
-[DestinationDirs]
-nvshldctrl.Inst_CoInstaller_CopyFiles = 11
-
 [nvshldctrl.Inst.NT.CoInstallers]
 AddReg=nvshldctrl.Inst_CoInstaller_AddReg
 CopyFiles=nvshldctrl.Inst_CoInstaller_CopyFiles
@@ -104,9 +95,6 @@ HKR,,CoInstallers32,0x00010000, "WdfCoInstaller$KMDFCOINSTALLERVERSION$.dll,WdfC
 
 [nvshldctrl.Inst_CoInstaller_CopyFiles]
 WdfCoInstaller$KMDFCOINSTALLERVERSION$.dll,,,0x00000010    ;COPYFLG_NO_OVERWRITE (for win2k)
-
-[SourceDisksFiles]
-WdfCoInstaller$KMDFCOINSTALLERVERSION$.dll=99 ; make sure the number matches with SourceDisksNames
 
 [nvshldctrl.Inst.NT.Wdf]
 KmdfService = nvshldctrl, nvshldctrl_wdfsect
@@ -121,10 +109,10 @@ KmdfLibraryVersion = $KMDFVERSION$
 
 [Strings] 
 ;Localizable
-ProviderName        = "Angry AMD user"
+ProviderName        = "Nefarius Software Solutions"
 ManufacturerName    = "NVIDIA"
-nvshldctrl           = "NVIDIA SHIELD Controller" 
-DISK_NAME           = "HID USB FX2 Device Sample Install Disk"
+nvshldctrl          = "NVIDIA Shield Controller" 
+DISK_NAME           = "NVIDIA Shield Controller Device Install Disk"
 
 ;Non-Localizable
 SERVICE_BOOT_START     = 0x0 

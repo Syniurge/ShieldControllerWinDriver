@@ -3,7 +3,6 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
     <SignMode>TestSign</SignMode>
-    <TestCertificate>..\cert\ShieldController.pfx</TestCertificate>
     <ProductionCertificate>
     </ProductionCertificate>
     <CrossCertificateFile>
@@ -11,7 +10,6 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <SignMode>TestSign</SignMode>
-    <TestCertificate>..\cert\ShieldController.pfx</TestCertificate>
     <ProductionCertificate>
     </ProductionCertificate>
     <CrossCertificateFile>
@@ -19,7 +17,6 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <SignMode>TestSign</SignMode>
-    <TestCertificate>..\cert\ShieldController.pfx</TestCertificate>
     <ProductionCertificate>
     </ProductionCertificate>
     <CrossCertificateFile>
@@ -27,7 +24,6 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <SignMode>TestSign</SignMode>
-    <TestCertificate>..\cert\ShieldController.pfx</TestCertificate>
     <ProductionCertificate>
     </ProductionCertificate>
     <CrossCertificateFile>
