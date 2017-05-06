@@ -8,7 +8,7 @@
 .Set CompressionType=MSZIP
 .Set Cabinet=on
 .Set Compress=on
-; HidGuardian
+; nvshldctrl
 .Set DestinationDir=nvshldctrl
 nvshldctrl.sys
 nvshldctrl.inf
