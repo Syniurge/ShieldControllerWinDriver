@@ -36,7 +36,7 @@ Finally, the trackpad input gets tweaked to work like a standard trackpad, and b
 Making this driver was helped tremendously by `usbhid-dump`, `hidrd-convert`, UsbLyzer, Wireshark, the `gc_n64_usb` firmware source code, and the vague yet helpful instructions that someone who managed to change a USB descriptor gave on the ntdev mailing-list.
 
 ## Binaries (Windows 7 and later)
- [Download latest release](../../releases/latest).
+ [Download latest release](https://github.com/nefarius/ShieldControllerWinDriver/releases/latest).
 
 ## Installation
 To install the driver right-click on the .inf file and select `Install`.
