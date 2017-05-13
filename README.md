@@ -1,3 +1,5 @@
+**IMPORTANT: this driver doesn't support the 2017 Shield Controller yet. Support is planned but until then, the new model is already partially supported out-of-the-box by the generic Windows driver.**
+
 NVIDIA Shield Controller Windows driver
 =======================
 This small USB filter driver intercepts and tweaks the HID Report Descriptor to make DirectInput detect it as a gamepad. It also emulates a force feedback device for rumble support in both DirectInput and Xinput games, tweaks the input data of the trackpad to make it usable, and adds support for the volume increment/decrement buttons.
