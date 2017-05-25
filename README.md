@@ -1,13 +1,11 @@
 **IMPORTANT: this driver doesn't support the 2017 Shield Controller yet. Support is planned but until then, the new model is already partially supported out-of-the-box by the generic Windows driver.**
 
-NVIDIA Shield Controller Windows driver
-=======================
+# NVIDIA Shield Controller Windows driver
 This small USB filter driver intercepts and tweaks the HID Report Descriptor to make DirectInput detect it as a gamepad. It also emulates a force feedback device for rumble support in both DirectInput and Xinput games, tweaks the input data of the trackpad to make it usable, and adds support for the volume increment/decrement buttons.
 
 NVIDIA previously released a driver that was bundled with GeForce Experience and only usable by NVIDIA graphics card users, and also suffered from a variety of issues according to forum discussions. Excluding AMD and Intel graphics card owners has made a lot of people extremely displeased. I've bought Tegra hardware (nVidia Shield tablet and Jetson) and used to applaud their open source efforts, but screwing their game controller buyers like this makes me regret my decision.
 
-What was the issue?
---------------
+## What was the issue?
 The controller is a HID-compliant game controller, it's supported out-of-the-box on Linux and applications accessing it through raw HID. So theoretically it should be supported by generic Windows drivers, but it wasn't being detected by DirectInput.
 
 By playing with the `vhidmini` driver from the DDK which provides a virtual HID device, I managed to find what prevented the detection inside the HID Report Descriptor:
@@ -39,35 +37,10 @@ Finally, the trackpad input gets tweaked to work like a standard trackpad, and b
 
 Making this driver was helped tremendously by `usbhid-dump`, `hidrd-convert`, UsbLyzer, Wireshark, the `gc_n64_usb` firmware source code, and the vague yet helpful instructions that someone who managed to change a USB descriptor gave on the ntdev mailing-list.
 
-Binaries (Windows 7 and later)
---------------
- * 64 bits: http://homo-nebulus.fr/shieldcontrollerusbfilter/ShieldControllerDriver_64.zip
- * 32 bits: http://homo-nebulus.fr/shieldcontrollerusbfilter/ShieldControllerDriver_32.zip
+## Binaries (Windows 7 and later)
+ [Download latest release](https://github.com/nefarius/ShieldControllerWinDriver/releases/latest).
 
-Installation and signing issue
---------------
-
-The driver is test-signed (signing a driver for public release would cost me $260), test-signed drivers must first be enabled:
-
-1. Open the task manager (`Ctrl+Alt+Del`)
-2. *File* -> *Run new task*
-3. Type "cmd", check "Create this task with administrator privileges"
-4. Run the following command: `Bcdedit.exe /set TESTSIGNING ON`
-5. Reboot
-
-You should see "Test mode" in the bottom-right corner of the desktop. Sorry about that, but Windows will now let you install and load the driver.
-
+## Installation
 To install the driver right-click on the .inf file and select `Install`.
 
-The generic driver still takes precedence over test-signed drivers, so you now have to manually select the driver for your Shield controller in the device manager. First display devices by connection, so you can find your controller easily:
-
-![alt text](https://github.com/Syniurge/ShieldControllerWinDriver/blob/master/doc/DevMgrByConnection.png "DevMgrByConnection")
-![alt text](https://github.com/Syniurge/ShieldControllerWinDriver/blob/master/doc/ShieldControllerPID.png "ShieldControllerPID")
-
-Then select the **root** `USB input device` node and choose "Update the driver..", and then:
-
-![alt text](https://github.com/Syniurge/ShieldControllerWinDriver/blob/master/doc/ShieldCtrlDriverStep1.png "ShieldCtrlDriverStep1")
-![alt text](https://github.com/Syniurge/ShieldControllerWinDriver/blob/master/doc/ShieldCtrlDriverStep2.png "ShieldCtrlDriverStep2")
-![alt text](https://github.com/Syniurge/ShieldControllerWinDriver/blob/master/doc/ShieldCtrlDriverStep3.png "ShieldCtrlDriverStep3")
-
-Finally disconnect and reconnect the controller as switching drivers sometimes causes problems. It should now be detected as a DirectInput gamepad, in games, x360ce, etc.
+Disconnect and reconnect the controller as switching drivers sometimes causes problems. It should now be detected as a DirectInput gamepad, in games, x360ce, etc.

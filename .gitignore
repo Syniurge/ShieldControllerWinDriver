@@ -1,0 +1,15 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+/sys/Debug
+/nvshldctrl.VC.VC.opendb
+/nvshldctrl.VC.db
+/hidusbfx2.VC.db
+/.vs/nvshldctrl/v14/.suo
+/.vs/nvshldctrl/v14
+/sys/Release/nvshldctrl.tlog
+/sys/Release/nvshldctrl
+/sys/Release
+/sys/x64/Release
+/sys/x64/Debug

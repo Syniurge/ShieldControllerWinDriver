@@ -1,0 +1,15 @@
+.OPTION EXPLICIT     ; Generate errors 
+.Set CabinetFileCountThreshold=0
+.Set FolderFileCountThreshold=0
+.Set FolderSizeThreshold=0
+.Set MaxCabinetSize=0
+.Set MaxDiskFileCount=0
+.Set MaxDiskSize=0
+.Set CompressionType=MSZIP
+.Set Cabinet=on
+.Set Compress=on
+; nvshldctrl
+.Set DestinationDir=nvshldctrl
+nvshldctrl.sys
+nvshldctrl.inf
+WdfCoinstaller01009.dll

@@ -22,7 +22,6 @@
     <ClCompile Include="driver.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="hid.c" />
     <ClCompile Include="driver.c">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -35,9 +34,10 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="hid.c" />
-    <ClCompile Include="usb.c" />
     <ClCompile Include="hid.c" />
-    <ClCompile Include="usb.c" />
+    <ClCompile Include="hid.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="hidusbfx2.rc">
@@ -49,6 +49,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="hidusbfx2.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="resource.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
